@@ -1,0 +1,116 @@
+{
+  "info": {
+    "name": "IMDb Data Provider API",
+    "description": "Local FastAPI over IMDb datasets. Base URL: http://localhost:11100 (or your server IP).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:11100" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health",
+        "description": "Check API and data availability."
+      }
+    },
+    {
+      "name": "Search (movies)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/search?q=inception&type=movie&limit=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["search"],
+          "query": [
+            { "key": "q", "value": "inception", "description": "Search term (required)" },
+            { "key": "year", "value": "", "description": "Filter by year (optional)" },
+            { "key": "type", "value": "movie", "description": "movie | tvseries | tvepisode | any" },
+            { "key": "limit", "value": "10", "description": "Max results (1-100)" },
+            { "key": "include_akas", "value": "false", "description": "Also search alternate titles" }
+          ]
+        },
+        "description": "Search titles by name."
+      }
+    },
+    {
+      "name": "Search (TV series)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/search?q=breaking+bad&type=tvseries&limit=5"
+      }
+    },
+    {
+      "name": "Get title by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/title/tt1375666?include_episodes=false",
+          "host": ["{{baseUrl}}"],
+          "path": ["title", "tt1375666"],
+          "query": [
+            { "key": "include_episodes", "value": "false", "description": "If true and tvseries, include seasons/episodes" }
+          ]
+        },
+        "description": "tconst example: tt1375666 (Inception)"
+      }
+    },
+    {
+      "name": "Get title with episodes (TV series)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/title/tt0903747?include_episodes=true"
+      }
+    },
+    {
+      "name": "Get credits",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/title/tt1375666/credits?category=&limit=50",
+          "host": ["{{baseUrl}}"],
+          "path": ["title", "tt1375666", "credits"],
+          "query": [
+            { "key": "category", "value": "", "description": "Filter: actor, actress, director, writer, etc." },
+            { "key": "limit", "value": "50" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get person",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/person/nm0000138",
+        "description": "nconst example: nm0000138 (Leonardo DiCaprio)"
+      }
+    },
+    {
+      "name": "Get series episodes",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/series/tt0903747/episodes?season=&limit=100&offset=0",
+          "host": ["{{baseUrl}}"],
+          "path": ["series", "tt0903747", "episodes"],
+          "query": [
+            { "key": "season", "value": "", "description": "Filter by season number" },
+            { "key": "limit", "value": "100" },
+            { "key": "offset", "value": "0" }
+          ]
+        },
+        "description": "tconst = TV series ID (e.g. tt0903747 = Breaking Bad)"
+      }
+    }
+  ]
+}
