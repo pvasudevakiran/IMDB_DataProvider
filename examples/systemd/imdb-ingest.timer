@@ -1,0 +1,12 @@
+[Unit]
+Description=Run IMDb ingest daily at 22:00 Asia/Kolkata
+Requires=imdb-ingest.service
+
+[Timer]
+# 22:00 Asia/Kolkata: use 16:30 UTC, or if server TZ is Asia/Kolkata use 22:00:00
+OnCalendar=*-*-* 16:30:00
+Persistent=true
+AccuracySec=5min
+
+[Install]
+WantedBy=timers.target

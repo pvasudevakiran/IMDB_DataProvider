@@ -1,0 +1,19 @@
+[Unit]
+Description=IMDb Data Provider nightly ingest
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Set these to your project path and user
+WorkingDirectory=/path/to/IMDB_DataProvider
+ExecStart=/path/to/IMDB_DataProvider/.venv/bin/python -m imdb_service.ingest
+User=youruser
+Group=yourgroup
+# Optional: capture output to journal
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

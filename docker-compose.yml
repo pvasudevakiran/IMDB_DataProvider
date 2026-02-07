@@ -1,0 +1,44 @@
+# Production-like Compose: one service (FastAPI + APScheduler ingest), separate volumes
+# Base path for all volume data: /mnt/disk7/docker/imdb-data-import
+
+services:
+  imdb-api:
+    build: .
+    image: imdb-data-provider:latest
+    container_name: imdb-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-11100}:11100"
+    environment:
+      DATA_DIR: /app/data
+      DOWNLOAD_DIR: /app/data/downloads
+      TMP_DIR: /app/data/tmp
+      PARQUET_DIR: /app/data/parquet_builds
+      META_DIR: /app/data
+      LOG_DIR: /app/logs
+      UPDATE_TIME: "22:00"
+      TZ: Asia/Kolkata
+      ENABLE_AKAS: "${ENABLE_AKAS:-true}"
+      # Worker count: set UVICORN_WORKERS (default 4) for concurrency
+      # e.g. UVICORN_WORKERS=4 in .env or override
+    volumes:
+      # A) Downloads: *.tsv.gz and manifest (etag/last-modified)
+      - /mnt/disk7/docker/imdb-data-import/downloads:/app/data/downloads
+      # B) Temp/staging: intermediate build; atomic promote to parquet_builds
+      - /mnt/disk7/docker/imdb-data-import/tmp:/app/data/tmp
+      # C) Parquet builds: versioned parquet output
+      - /mnt/disk7/docker/imdb-data-import/parquet_builds:/app/data/parquet_builds
+      # D) Meta: current pointer, dataset_version.json, ingest.lock (survives restarts)
+      - /mnt/disk7/docker/imdb-data-import/meta:/app/data
+      # E) Logs: daily API and ingest logs
+      - /mnt/disk7/docker/imdb-data-import/logs:/app/logs
+      # F) Optional: DuckDB file folder (uncomment if using persistent DuckDB)
+      # - /mnt/disk7/docker/imdb-data-import/duckdb:/app/data/duckdb
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:11100/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    # Run as non-root; ensure volume dirs are writable by this user (e.g. chown -R 1000:1000 /mnt/disk7/docker/imdb-data-import)
+    user: "${PUID:-1000}:${PGID:-1000}"

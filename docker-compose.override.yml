@@ -1,0 +1,14 @@
+# Optional override for local development (bind mounts, fewer workers, port)
+# Usage: docker compose up -d   (automatically merges with docker-compose.yml)
+
+services:
+  imdb-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Fewer workers for dev if desired
+      ENABLE_AKAS: "true"
+    # Optional: mount source for live code edits (then use reload in CMD - not for production)
+    # volumes:
+    #   - .:/app:ro

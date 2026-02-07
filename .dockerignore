@@ -1,0 +1,11 @@
+# Avoid copying local data and caches into the image
+data/
+logs/
+volumes/
+.venv/
+__pycache__/
+*.pyc
+.env
+.git/
+*.md
+examples/

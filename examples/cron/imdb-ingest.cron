@@ -1,0 +1,12 @@
+# IMDb Data Provider - nightly ingest at 22:00 Asia/Kolkata
+# Install: crontab -e and paste the line below (adjust paths and TZ if needed).
+#
+# Prerequisites:
+#   - Activate venv or use full path to python
+#   - LOG_DIR must exist or ensure redirect path is writable
+#
+# 22:00 every day (Asia/Kolkata)
+# TZ=Asia/Kolkata 0 22 * * * /path/to/IMDB_DataProvider/.venv/bin/python -m imdb_service.ingest >> /path/to/IMDB_DataProvider/logs/cron_ingest.log 2>&1
+
+TZ=Asia/Kolkata
+0 22 * * * cd /path/to/IMDB_DataProvider && .venv/bin/python -m imdb_service.ingest >> logs/cron_ingest.log 2>&1
