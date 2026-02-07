@@ -3,7 +3,9 @@
 
 services:
   imdb-api:
-    build: .
+    build:
+      context: .
+      network: host
     image: imdb-data-provider:latest
     container_name: imdb-api
     restart: unless-stopped
